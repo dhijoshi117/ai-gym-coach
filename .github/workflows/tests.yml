@@ -9,5 +9,5 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: python -m pip install -r "Main App/requirements.txt"
-      - run: PYTHONPATH="Main App" python -m unittest discover -s "Main App/tests" -v
+      - run: python -m pip install -r "gym_app/requirements.txt"
+      - run: PYTHONPATH="gym_app" python -m unittest discover -s "gym_app/tests" -v

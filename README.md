@@ -8,8 +8,8 @@ Use Python 3.11. On an Apple Silicon Mac with Conda, run these commands from the
 
 ```bash
 conda create --yes --prefix "$PWD/venv" python=3.11 pip
-./venv/bin/python -m pip install -r "Main App/requirements.txt"
-./venv/bin/python -m streamlit run "Main App/main.py"
+./venv/bin/python -m pip install -r "gym_app/requirements.txt"
+./venv/bin/python -m streamlit run "gym_app/main.py"
 ```
 
 Open [localhost:8501](http://localhost:8501). Choose an exercise, and click **Start Workout**. Start the video component and grant camera access. Keep the relevant joints visible. Try one set of three squats, then check the completed set in **Workout History**.
@@ -34,7 +34,7 @@ MediaPipe processes video in the Python app. The detectors measure joint angles 
 ## Run regression tests
 
 ```bash
-PYTHONPATH="Main App" ./venv/bin/python -m unittest discover -s "Main App/tests" -v
+PYTHONPATH="gym_app" ./venv/bin/python -m unittest discover -s "gym_app/tests" -v
 ```
 
 The tests cover synthetic rep cycles for each detector, completion limits, reconnects, pose loss, and voice failures. They use no camera, API key, or live workout database.
@@ -46,6 +46,6 @@ The default guest mode needs no account. Completed sets are private to the curre
 
 ## Deploy the guest demo
 
-Deploy the GitHub repository in Streamlit Community Cloud using branch `main`, entrypoint `Main App/main.py`, and Python 3.11. Leave `GYM_COACH_MODE` unset so the deployed app uses guest sessions. The first deployment can use text coaching without secrets. If you enable voice, enter `GROQ_API_KEY` in the host’s app secrets.
+Deploy the GitHub repository in Streamlit Community Cloud using branch `main`, entrypoint `gym_app/main.py`, and Python 3.11. Leave `GYM_COACH_MODE` unset so the deployed app uses guest sessions. The first deployment can use text coaching without secrets. If you enable voice, enter `GROQ_API_KEY` in the host’s app secrets.
 
 Test the link with two separate browser sessions. Complete one set in the first and confirm that the second starts with empty history. Verify that the remote webcam can connect from another network. Restrictive networks may require a TURN relay.

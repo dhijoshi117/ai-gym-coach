@@ -11,7 +11,7 @@ venv/
 Thumbs.db
 
 # Database
-Main App/data.db
+gym_app/data.db
 
 # Logs
 *.log
