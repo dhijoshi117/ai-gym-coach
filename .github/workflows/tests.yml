@@ -3,11 +3,17 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Install Linux runtime libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1 libglib2.0-0t64 libsm6 libxext6
       - run: python -m pip install -r "gym_app/requirements.txt"
       - run: PYTHONPATH="gym_app" python -m unittest discover -s "gym_app/tests" -v
+      - name: Start app and process a frame
+        run: PYTHONPATH=gym_app python gym_app/tests/startup_smoke.py

@@ -215,7 +215,7 @@ class VideoProcessorClass(VideoProcessorBase):
             self._draw_no_pose_warnings(image)
             
             detector = self._detectors[self._exercise_type]
-            detector.stage = None
+            detector.on_pose_lost()
             self.set_latest_metrics({"pose_detected": False, "reps": detector.reps})
 
         return av.VideoFrame.from_ndarray(image, format="bgr24")

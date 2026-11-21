@@ -28,6 +28,9 @@ class BaseExercise(ABC):
 
         return (p.x, p.y)
 
+    def on_pose_lost(self):
+        self.stage = None
+
     @abstractmethod
     def process(self, landmarks):
         pass

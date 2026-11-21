@@ -2,8 +2,9 @@ from core.base_exercise import BaseExercise
 
 
 class SquatDetector(BaseExercise):
-    DOWN_THRESHOLD = 100   
-    UP_THRESHOLD = 160     
+    DOWN_THRESHOLD = 100
+    ATTEMPT_THRESHOLD = 145
+    UP_THRESHOLD = 160
     MIN_VISIBILITY = 0.7
 
     LEFT_HIP = 23
@@ -17,10 +18,17 @@ class SquatDetector(BaseExercise):
 
     def __init__(self):
         super().__init__()
+        self._deepest_angle = None
+        self._depth_status = "N/A"
 
     def reset(self):
         self.reps = 0
-        self.stage = None
+        self.on_pose_lost()
+
+    def on_pose_lost(self):
+        super().on_pose_lost()
+        self._deepest_angle = None
+        self._depth_status = "N/A"
 
     def process(self, landmarks):
         left_knee_angle = self.calculate_angle(
@@ -53,25 +61,27 @@ class SquatDetector(BaseExercise):
 
         key_landmark_visible = landmarks[hip_idx].visibility >= self.MIN_VISIBILITY and landmarks[knee_idx].visibility >= self.MIN_VISIBILITY and landmarks[ankle_idx].visibility >= self.MIN_VISIBILITY
 
-        if key_landmark_visible:
-            if knee_angle < self.DOWN_THRESHOLD:
-                self.stage = "down"
-
-            if knee_angle >= self.UP_THRESHOLD and self.stage == "down":
-                self.stage = "up"
-                self.reps += 1
-
-        if self.stage == "down":
-            depth_status = "GOOD DEPTH" if knee_angle <= self.DOWN_THRESHOLD else "TOO HIGH"
-        elif self.stage == "up":
-            depth_status = "STANDING"
-        else:
-            depth_status = "N/A"
+        if not key_landmark_visible:
+            self.on_pose_lost()
+        elif self._deepest_angle is not None:
+            self._deepest_angle = min(self._deepest_angle, knee_angle)
+            if knee_angle >= self.UP_THRESHOLD:
+                if self._deepest_angle < self.DOWN_THRESHOLD:
+                    self.reps += 1
+                    self._depth_status = "GOOD DEPTH"
+                else:
+                    self._depth_status = "TOO HIGH"
+                self._deepest_angle = None
+        elif knee_angle < self.ATTEMPT_THRESHOLD:
+            self._deepest_angle = knee_angle
+            self._depth_status = "IN PROGRESS"
+        elif knee_angle >= self.UP_THRESHOLD and self._depth_status == "N/A":
+            self._depth_status = "STANDING"
 
         return {
             "reps": self.reps,
             "knee_angle": int(knee_angle),
             "back_angle": int(back_angle),
-            "depth_status": depth_status
+            "depth_status": self._depth_status
         }
     
