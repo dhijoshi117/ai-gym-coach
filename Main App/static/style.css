@@ -1,0 +1,19 @@
+[data-testid="stAppViewContainer"],
+[data-testid="stSidebar"] {
+  font-family: "AdobeClean", sans-serif;
+}
+
+.block-container {
+  max-width: 960px;
+}
+
+[data-testid="stMetric"] {
+  background-color: var(--secondary-background-color);
+  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  border-radius: 0.75rem;
+  padding: 0.85rem;
+}
+
+[data-testid="stMetricLabel"] {
+  opacity: 1;
+}
